@@ -1,0 +1,20 @@
+[Unit]
+Description=Sys order server damon 
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# modify when deploy in prod env
+User=root
+Group=root
+
+Type=simple
+ExecStart=/xxx/xxx/OrdsOrder
+WorkingDirectory=/xxx/xxx/OrdsOrder
+
+Restart=always
+RestartSec=1
+StartLimitInterval=0
+
+[Install]
+WantedBy=multi-user.target

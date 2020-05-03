@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>工单平台</title>
+    <link rel="stylesheet" href="./static/layui/css/layui.css">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">panda测试工单系统</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    {{ .phone }}
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="/staff">基本资料</a></dd>
+                    <dd><a href="/v1/api/logout">推出系统</a></dd>
+                </dl>
+            </li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <li class="layui-nav-item"><a href="/">所有工单</a></li>
+                <li class="layui-nav-item"><a href="/exec">处理工单</a></li>
+                <li class="layui-nav-item"><a href="/suspensive">工单挂起</a></li>
+                <li class="layui-nav-item {{ .is_pushorder }}"><a href="/pushorder">发布工单</a></li>
+                <li class="layui-nav-item layui-nav-itemed {{ .is_admin }}">
+                    <a href="javascript:;">工单审计</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="/endorder">完成的工单</a></dd>
+                        <dd><a href="/timeout">超时的工单</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item layui-nav-itemed {{ .is_admin }}">
+                    <a href="javascript:;">人员授权</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="/startp">发单人员</a></dd>
+                        <dd><a href="/execp">执行工单</a></dd>
+                        <dd><a href="/addp">添加人员</a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+
+            <table class="layui-show" id="index" lay-filter="test"></table>
+        </div>
+    </div>
+
+    <div class="layui-footer" style="height: 160px">
+        <!-- 底部固定区域 -->
+        {{/*            © layui.com - 底部固定区域*/}}
+        <table class="layui-table">
+            <colgroup>
+                <col width="150">
+                <col width="200">
+                <col>
+            </colgroup>
+            <thead>
+            <tr>
+                <th>联系人</th>
+                <th>职务</th>
+                <th>联系电话</th>
+                <th>岗位</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{ range .dperson  }}
+                <tr>
+                    <td>{{ .TDusername }}</td>
+                    <td>{{ .TFunction }}</td>
+                    <td>{{ .TDphone }}</td>
+                    <td>{{ .TType}}</td>
+                </tr>
+            {{ end  }}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+<script src="../../static/layui/layui.js"></script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+</script>
+
+<script>
+    //JavaScript代码区域
+    layui.use('element', function(){
+        var element = layui.element;
+
+    });
+    //center 区域数据
+    layui.use('table', function(){
+        var table = layui.table;
+
+        table.render({
+            elem: '#index'
+            ,url:'/v1/api/endorder/'  //返回一个json 字符串
+            // ,toolbar: true  //打印按钮
+            ,page: {
+                //支持传入 laypage 组件的所有参数（某些参数除外，如：jump/elem） - 详见文档
+                layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] //自定义分页布局
+                //,curr: 5 //设定初始在第 5 页
+                ,groups: 1 //只显示 1 个连续页码
+                // ,first: false //不显示首页
+                // ,last: false //不显示尾页
+            }
+            ,title: '工单数据表'
+            ,totalRow: true
+            ,cellMinWidth: 20
+            ,response:{
+                statusCode:200
+            }
+            ,cols: [[
+                {field:'t_create', title: '发单时间'}
+                ,{field:'t_number', title: '工单ID'}
+                ,{field:'t_name', title: '标题'}
+                ,{field:'t_type', title: '类型'}
+                ,{field:'t_org', title: '来源'}
+                ,{field:'t_username', title: '发单人'}
+                ,{field:'t_phone', title: '电话'}
+                ,{field:'t_status', title: '工单状态'}
+                ,{field:'t_endtime', title: '完成时间'}
+                ,{field:'t_extend', title: '备注'}
+                ,{fixed: 'right', width: 65, align:'center', toolbar: '#barDemo',title: '工具'}
+            ]]
+        });
+
+        //监听行工具事件
+        table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data //获得当前行数据
+                ,layEvent = obj.event; //获得 lay-event 对应的值
+            //点击查看获取工单uid
+            // console.log(obj.data.t_number)
+            // console.log(data.content)
+            obj.href = "/v1/api/Order?uid=" + obj.data.t_number
+            if(obj.event === "detail"){
+                window.location.href = obj.href;
+                // window.location.replace(obj.href);
+            }
+
+        });
+
+    });
+
+</script>
+</body>
+</html>

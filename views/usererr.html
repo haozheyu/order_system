@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href=".static/layui/css/layui.css"  media="all">
+    <title>错误页面</title>
+</head>
+<body style="background-color: #fff9fc; background-image: url('/static/img/狗子.jpg'); background-size: cover;
+width: 100%; height: 100%;  position: relative;">
+
+<br>
+<br>
+<br>
+    <br>
+    <hr>
+    <br>
+<div style="padding: 20px; background-color: #F2F2F2;">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12 layui-col-md-offset6">
+            <div class="layui-card">
+                <div class="layui-card-header">错误信息内容</div>
+                <div class="layui-card-body">
+                    <H1 style="display: inline-block"> {{ .msg }}</H1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <br>
+    <br>
+    <br>
+<a href="/login" class="layui-btn" target="_blank">返回登录</a>
+<script src=".static/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['element', 'layer'], function(){
+        var element = layui.element;
+        var layer = layui.layer;
+
+
+    });
+</script>
+</body>
+</html>
