@@ -17,7 +17,6 @@ func Init() *gorm.DB {
 	mysqlpass := beego.AppConfig.String("mysqlpass")
 	url := beego.AppConfig.String("mysqlurls")
 	dbname := beego.AppConfig.String("mysqldb")
-	//"mysql", "root:123123@tcp(192.168.1.119)/ticket_system?charset=utf8mb4"
 	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4",mysqluser,mysqlpass,url,dbname)
 	db,err = gorm.Open("mysql", dsn)
 	if err != nil {
@@ -25,6 +24,6 @@ func Init() *gorm.DB {
 	}
 	db.DB().SetMaxOpenConns(20) //数据库连接池中最大连接数
 	db.DB().SetMaxIdleConns(10) //连接池中允许最大空闲连接数
-	db.LogMode(true) // 开启sql debug
+	//db.LogMode(true) // 开启sql debug
 	return db
 }
